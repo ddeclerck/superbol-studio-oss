@@ -51,25 +51,23 @@ type usage =
   | Program_pointer of Cobol_ptree.name with_loc option                (* tmp *)
 and signedness = { signed: bool }
 
-type data_storage =
-  | File
-  | Local_storage
-  | Working_storage
-  | Linkage                                                          (* file? *)
-
-let pp_data_storage ppf s =
-  Fmt.string ppf @@ match s with
-  | File -> "FILE"
-  | Local_storage -> "LOCAL-STORAGE"
-  | Working_storage -> "WORKING-STORAGE"
-  | Linkage -> "LINKAGE"
-
 type length =
   | Fixed_length
   | Variable_length
   (* Note: OCCURS DYNAMIC is considered fixed-length in ISO/IEC *)
 
-type record =
+type data_storage =
+  | File of file
+  | Local_storage
+  | Working_storage
+  | Linkage                                                          (* file? *)
+
+and file = (* add kind : FD/SD/RD*)
+  {
+    file_name: string;
+  }
+
+and record =
   {
     record_name: string;
     record_storage: data_storage;
@@ -215,3 +213,10 @@ type data_definition =
       }
 
 (* screen: "_ OCCURS n TIMES" only. Max 2 dimensions. *)
+
+let pp_data_storage ppf s =
+  Fmt.string ppf @@ match s with
+  | File f -> "FILE " ^ f.file_name
+  | Local_storage -> "LOCAL-STORAGE"
+  | Working_storage -> "WORKING-STORAGE"
+  | Linkage -> "LINKAGE"
