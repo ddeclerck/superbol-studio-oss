@@ -154,6 +154,7 @@ jobs:
       - name: Build documentation
         if: github.ref == 'refs/heads/master' && matrix.ocaml-compiler == '4.14.2' && matrix.os == 'ubuntu-latest'
         run: |
+             sudo apt update --fix-missing
              sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
              opam install -y dune odoc
              make doc
